@@ -1,0 +1,15 @@
+---
+version: "3.8"
+services:
+  consumer:
+    image: hsmtkk/solid-pancake:consumer-latest
+    environment:
+      NATS_URL: nats://nats:4222
+      NATS_SUBJECT: test
+  nats:
+    image: nats:2.7
+  producer:
+    image: hsmtkk/solid-pancake:producer-latest
+    environment:
+      NATS_URL: nats://nats:4222
+      NATS_SUBJECT: test
