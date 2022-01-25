@@ -12,3 +12,15 @@ spec:
       port: 14250
     - protocol: TCP
       port: 16686
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solid-pancake-nats
+spec:
+  type: ClusterIP
+  selector:
+    app: solid-pancake-nats
+  ports:
+    - protocol: TCP
+      port: 4222

@@ -17,6 +17,11 @@ spec:
     spec:
       containers:
         - name: consumer
+          env:
+            - name: NATS_URL
+              value: nats://solid-pancake-nats:4222
+            - name: NATS_SUBJECT
+              value: test
           image: hsmtkk/solid-pancake:consumer-latest
           imagePullPolicy: Always
         - name: agent
@@ -43,8 +48,16 @@ spec:
     spec:
       containers:
         - name: producer
+          env:
+            - name: NATS_URL
+              value: nats://solid-pancake-nats:4222
+            - name: NATS_SUBJECT
+              value: test
           image: hsmtkk/solid-pancake:producer-latest
           imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 100m
         - name: agent
           image: jaegertracing/jaeger-agent:1.30
           args:
@@ -75,3 +88,25 @@ spec:
               containerPort: 16686
             - name: agent2collector
               containerPort: 14250
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solid-pancake-nats
+  labels:
+    app: solid-pancake-nats
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: solid-pancake-nats
+  template:
+    metadata:
+      labels:
+        app: solid-pancake-nats
+    spec:
+      containers:
+        - name: nats
+          image: nats:2.7
+          ports:
+            - containerPort: 4222
