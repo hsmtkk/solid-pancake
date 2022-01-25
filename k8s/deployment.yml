@@ -88,6 +88,10 @@ spec:
               containerPort: 16686
             - name: agent2collector
               containerPort: 14250
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
