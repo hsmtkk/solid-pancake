@@ -13,7 +13,7 @@ services:
       - --reporter.grpc.host-port=dns:///jaeger-server:14250
       - --reporter.type=grpc
   jaeger-srever:
-    image: jaegertracing/all-in-one:1.30
+    image: 
     ports:
       - "16686:16686"
   nats:
@@ -27,5 +27,3 @@ services:
   producer-agent:
     image: jaegertracing/jaeger-agent:1.30
     command:
-      - --reporter.grpc.host-port=dns:///jaeger-server:14250
-      - --reporter.type=grpc
