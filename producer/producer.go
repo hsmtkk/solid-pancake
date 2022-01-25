@@ -43,6 +43,7 @@ func publish(ctx context.Context, conn *nats.Conn, subj string) {
 	defer span.End()
 
 	m := msg.New()
+	log.Print(m.ID)
 	span.SetAttributes(attribute.Key("id").String(m.ID))
 
 	publish2(ctx)
