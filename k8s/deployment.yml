@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solid-pancake-consumer
+  labels:
+    app: solid-pancake-consumer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: solid-pancake-consumer
+  template:
+    metadata:
+      labels:
+        app: solid-pancake-consumer
+    spec:
+      containers:
+        - name: consumer
+          image: hsmtkk/solid-pancake:consumer-latest
+          imagePullPolicy: Always
+        - name: agent
+          image: jaegertracing/jaeger-agent:1.30
+          args:
+            - --reporter.grpc.host-port=dns:///solid-pancake-jaeger:14250
+            - --reporter.type=grpc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solid-pancake-producer
+  labels:
+    app: solid-pancake-producer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: solid-pancake-producer
+  template:
+    metadata:
+      labels:
+        app: solid-pancake-producer
+    spec:
+      containers:
+        - name: producer
+          image: hsmtkk/solid-pancake:producer-latest
+          imagePullPolicy: Always
+        - name: agent
+          image: jaegertracing/jaeger-agent:1.30
+          args:
+            - --reporter.grpc.host-port=dns:///solid-pancake-jaeger:14250
+            - --reporter.type=grpc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solid-pancake-jaeger
+  labels:
+    app: solid-pancake-jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: solid-pancake-jaeger
+  template:
+    metadata:
+      labels:
+        app: solid-pancake-jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: jaegertracing/all-in-one:1.30
+          ports:
+            - name: web-ui
+              containerPort: 16686
+            - name: agent2collector
+              containerPort: 14250

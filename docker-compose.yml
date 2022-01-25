@@ -6,6 +6,16 @@ services:
     environment:
       NATS_URL: nats://nats:4222
       NATS_SUBJECT: test
+      JAEGER_AGENT: consumer-agent
+  consumer-agent:
+    image: jaegertracing/jaeger-agent:1.30
+    command:
+      - --reporter.grpc.host-port=dns:///jaeger-server:14250
+      - --reporter.type=grpc
+  jaeger-srever:
+    image: jaegertracing/all-in-one:1.30
+    ports:
+      - "16686:16686"
   nats:
     image: nats:2.7
   producer:
@@ -13,3 +23,9 @@ services:
     environment:
       NATS_URL: nats://nats:4222
       NATS_SUBJECT: test
+      JAEGER_AGENT: consumer-agent
+  producer-agent:
+    image: jaegertracing/jaeger-agent:1.30
+    command:
+      - --reporter.grpc.host-port=dns:///jaeger-server:14250
+      - --reporter.type=grpc
