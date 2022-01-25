@@ -16,7 +16,7 @@ func main() {
 	natsURL := env.MandatoryString("NATS_URL")
 	natsSubject := env.MandatoryString("NATS_SUBJECT")
 
-	tp, err := traceprovider.New("provider")
+	tp, err := traceprovider.New("producer")
 	if err != nil {
 		log.Fatal(err)
 	}
