@@ -6,7 +6,7 @@ metadata:
   labels:
     app: solid-pancake-consumer
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: solid-pancake-consumer
@@ -37,7 +37,7 @@ metadata:
   labels:
     app: solid-pancake-producer
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: solid-pancake-producer
