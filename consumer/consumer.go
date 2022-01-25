@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/hsmtkk/solid-pancake/env"
 	"github.com/hsmtkk/solid-pancake/msg"
@@ -56,6 +58,19 @@ func (hdl *handler) Handle(natsMsg *nats.Msg) {
 	if err != nil {
 		log.Print(err)
 	}
-	log.Print(m.ID)
 	span.SetAttributes(attribute.Key("id").String(m.ID))
+
+	handle2(hdl.ctx)
+
+	log.Print(m.ID)
+}
+
+func handle2(ctx context.Context) {
+	tr := otel.Tracer("handle2")
+	_, span := tr.Start(ctx, "handle2")
+	defer span.End()
+
+	// some slow work
+	duration := time.Duration(rand.Intn(1000))
+	time.Sleep(duration * time.Millisecond)
 }

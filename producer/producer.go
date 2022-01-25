@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/hsmtkk/solid-pancake/env"
 	"github.com/hsmtkk/solid-pancake/msg"
@@ -42,9 +44,22 @@ func publish(ctx context.Context, conn *nats.Conn, subj string) {
 
 	m := msg.New()
 	span.SetAttributes(attribute.Key("id").String(m.ID))
+
+	publish2(ctx)
+
 	data, err := m.ToJSON()
 	if err != nil {
 		log.Print(err)
 	}
 	conn.Publish(subj, data)
+}
+
+func publish2(ctx context.Context) {
+	tr := otel.Tracer("publish2")
+	_, span := tr.Start(ctx, "publish2")
+	defer span.End()
+
+	// some slow work
+	duration := time.Duration(rand.Intn(1000))
+	time.Sleep(duration * time.Millisecond)
 }
