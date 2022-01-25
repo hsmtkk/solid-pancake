@@ -9,4 +9,6 @@ spec:
     app: solid-pancake-jaeger
   ports:
     - protocol: TCP
+      port: 14250
+    - protocol: TCP
       port: 16686
