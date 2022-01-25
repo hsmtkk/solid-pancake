@@ -8,9 +8,9 @@ spec:
   selector:
     app: solid-pancake-jaeger
   ports:
-    - protocol: TCP
+    - name: agent2collector
       port: 14250
-    - protocol: TCP
+    - name: web-ui
       port: 16686
 ---
 apiVersion: v1
@@ -22,5 +22,5 @@ spec:
   selector:
     app: solid-pancake-nats
   ports:
-    - protocol: TCP
+    - name: nats
       port: 4222
