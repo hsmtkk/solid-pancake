@@ -12,7 +12,10 @@ import (
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
+
+var tracer trace.Tracer
 
 func main() {
 	natsURL := env.MandatoryString("NATS_URL")
@@ -24,6 +27,7 @@ func main() {
 	}
 	defer tp.Shutdown(context.Background())
 	otel.SetTracerProvider(tp)
+	tracer = tp.Tracer("producer")
 
 	natsConn, err := nats.Connect(natsURL)
 	if err != nil {
@@ -38,8 +42,7 @@ func main() {
 }
 
 func publish(ctx context.Context, conn *nats.Conn, subj string) {
-	tr := otel.Tracer("publish")
-	_, span := tr.Start(ctx, "publish")
+	_, span := tracer.Start(ctx, "publish")
 	defer span.End()
 
 	m := msg.New()
@@ -56,8 +59,7 @@ func publish(ctx context.Context, conn *nats.Conn, subj string) {
 }
 
 func publish2(ctx context.Context) {
-	tr := otel.Tracer("publish2")
-	_, span := tr.Start(ctx, "publish2")
+	_, span := tracer.Start(ctx, "publish-child")
 	defer span.End()
 
 	// some slow work

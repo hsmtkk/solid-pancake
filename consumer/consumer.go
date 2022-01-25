@@ -12,7 +12,10 @@ import (
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
+
+var tracer trace.Tracer
 
 func main() {
 	natsURL := env.MandatoryString("NATS_URL")
@@ -24,6 +27,7 @@ func main() {
 	}
 	defer tp.Shutdown(context.Background())
 	otel.SetTracerProvider(tp)
+	tracer = tp.Tracer("consumer")
 
 	natsConn, err := nats.Connect(natsURL)
 	if err != nil {
@@ -50,8 +54,7 @@ func newHandler(ctx context.Context) *handler {
 }
 
 func (hdl *handler) Handle(natsMsg *nats.Msg) {
-	tr := otel.Tracer("handle")
-	_, span := tr.Start(hdl.ctx, "handle")
+	_, span := tracer.Start(hdl.ctx, "handle")
 	defer span.End()
 
 	m, err := msg.FromJSON(natsMsg.Data)
@@ -66,8 +69,7 @@ func (hdl *handler) Handle(natsMsg *nats.Msg) {
 }
 
 func handle2(ctx context.Context) {
-	tr := otel.Tracer("handle2")
-	_, span := tr.Start(ctx, "handle2")
+	_, span := tracer.Start(ctx, "handle-child")
 	defer span.End()
 
 	// some slow work
