@@ -12,6 +12,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	}
 	defer tp.Shutdown(context.Background())
 	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.TraceContext{})
 	tracer = tp.Tracer("producer")
 
 	natsConn, err := nats.Connect(natsURL)
